@@ -1,59 +1,88 @@
-import Link from "next/link";
-import { getTasks } from "@/lib/action";
 
-async function Home() {
-  const allTasks = await getTasks();
+import { createTask } from "@/lib/action"; // Import the createTask function from your action library
 
-  if (!allTasks) {
-    return (
-      <main className="p-8 bg-gray-100 min-h-screen">
-        <section className="max-w-7xl mx-auto">
-          <h1 className="text-4xl font-bold mb-6">Registred Tasks</h1>
-          <div className="text-gray-600 text-left w-full">
-            <p>No tasks found.</p>
-          </div>
-        </section>
-      </main>
-    );
+function Create() {
+  async function handleSubmit(formData) {
+    "use server";
+
+    const newTask = {
+      title: formData.get("title") as string,
+      description: formData.get("description") as string,
+      status: formData.get("status") as string,
+    };
+
+    await createTask(newTask);
   }
 
   return (
-    <main className="p-8 bg-gray-100 min-h-screen">
-      <section className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center">
-          <h1 className="text-4xl font-bold mb-6">Registred Tasks</h1>
-          <Link href="/create" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Create Task
-          </Link>
-        </div>
-      
-        <div className="grid grid-cols-1 gap-6 mt-5">
-          {allTasks?.length > 0 &&
-            allTasks.map((task) => (
-              <div
-                key={task._id}
-                className="border text-card-foreground bg-white shadow-lg rounded-lg p-2"
-                data-v0-t="card"
+    <main className="flex min-h-screen flex-col items-center p-24">
+      <div className="flex flex-col gap-5 max-w-md w-full">
+        <form
+          action={handleSubmit}
+          className="rounded-lg border bg-card text-card-foreground shadow-sm"
+          data-v0-t="card"
+        >
+          <div className="flex flex-col space-y-1.5 p-6">
+            <h3 className="text-2xl font-semibold leading-none tracking-tight">
+              Project Details
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Enter the details of your new project.
+            </p>
+          </div>
+          <div className="p-6 space-y-4">
+            <div className="flex flex-col space-y-1.5">
+              <label
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                htmlFor="title"
               >
-                <div className="flex flex-col space-y-1.5 p-6">
-                  <h3 className="text-2xl font-semibold leading-none tracking-tight">
-                    {task.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    {task.description}
-                  </p>
-                </div>
-                <div className="items-center flex justify-end px-6 pb-6">
-                  <span className="inline-block bg-green-200 rounded-full px-3 py-1 text-sm font-semibold text-green-700">
-                    {task.status}
-                  </span>
-                </div>
-              </div>
-            ))}
-        </div>
-      </section>
+                Title
+              </label>
+              <input
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                name="title"
+                placeholder="Enter the project title"
+              />
+            </div>
+            <div className="flex flex-col space-y-1.5">
+              <label
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                htmlFor="description"
+              >
+                Description
+              </label>
+              <input
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                name="description"
+                placeholder="Enter the project description"
+              />
+            </div>
+            <div className="flex flex-col space-y-1.5">
+              <label
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                htmlFor="status"
+              >
+                Status
+              </label>
+              <input
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                name="status"
+                placeholder="Enter the project status"
+              />
+            </div>
+          </div>
+          <div className="items-center p-6 flex justify-center">
+            <button
+              type="submit"
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full bg-teal-400 text-white"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
     </main>
   );
 }
 
-export default Home;
+export default Create;
